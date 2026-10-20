@@ -30,7 +30,8 @@
 | Offline Demo | READY | no data/model/API dependency |
 | Local full Agent | CONDITIONAL | sibling canonical/RAG/model assets required |
 | Live DeepSeek Demo | CONDITIONAL | explicit key, consent and V1.4.5 online smoke required |
-| Public GitHub | READY FOR CREATION | owner authorized public display of all 158 candidate files on 2026-10-20; no open-source license is granted |
+| Public GitHub | PUBLISHED | `https://github.com/Zhenwei-Chang/tomato-agent`; no open-source license is granted |
+| GitHub Pages | READY | `https://zhenwei-chang.github.io/tomato-agent/`; five scenarios and static assets verified with HTTP 200 |
 | Research production | NOT READY | public data, domain shift, no live control labels |
 
-A separate local Git candidate was initialized on `main`. Public-display authority was confirmed on 2026-10-20. At the time of this report update no GitHub repository had yet been created or pushed, no DeepSeek call was made, and the private 48-case holdout was not copied, run or modified.
+The isolated candidate was published to `Zhenwei-Chang/tomato-agent` on `main`. GitHub Actions portable checks and the Recorded Replay Pages deployment passed. No DeepSeek call was made during release, and the private 48-case holdout was not copied, run or modified.

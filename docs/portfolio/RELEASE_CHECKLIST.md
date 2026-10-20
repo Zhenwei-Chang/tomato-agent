@@ -11,7 +11,7 @@ Status labels: DONE, CONDITIONAL, BLOCKED, NOT_RUN.
 | Four required scenarios | DONE | knowledge, prediction, memory, comprehensive |
 | Safety refusal scenario | DONE | `safety_refusal.json` |
 | Desktop and 390 px screenshots | DONE | browser-rendered files under `docs/portfolio/screenshots/` |
-| GitHub Pages payload | DONE | workflow uploads `demo/` only; remote deployment NOT_RUN |
+| GitHub Pages payload | DONE | workflow uploads `demo/` only; deployment verified at `https://zhenwei-chang.github.io/tomato-agent/` |
 | Full Local Agent CLI | CONDITIONAL | requires sibling assets and local extras |
 | DeepSeek Online entry | CONDITIONAL | explicit credentials/consent; V1.4.5 online NOT_RUN |
 | Portable Live Fixture Agent | NOT_RUN | intentionally not duplicated for the portfolio; recorded replay plus existing Full Local path retained |
@@ -39,8 +39,8 @@ Status labels: DONE, CONDITIONAL, BLOCKED, NOT_RUN.
 | Sanitized fixture publication rights | DONE | owner confirmed ownership or authorization for public display on 2026-10-20 |
 | Project source public-display authority | DONE | owner confirmed ownership or authorization for all 158 candidate files on 2026-10-20 |
 | Project code license selected | NOT_APPLICABLE | no license will be added without a separate explicit decision; public visibility grants no reuse rights |
-| Git staged-index secret/asset scan | CONDITIONAL | scanner passes working candidate; rerun after final staging |
-| Git history scan | NOT_APPLICABLE | repository has no commit/history yet |
+| Git staged-index secret/asset scan | DONE | scanner passed before the first commit and again before the release-status update |
+| Git history scan | DONE | public history contains only audited release commits; no forbidden asset or secret finding |
 
 ## Verification
 
@@ -56,17 +56,20 @@ Status labels: DONE, CONDITIONAL, BLOCKED, NOT_RUN.
 | Installed wheel CLI | DONE | `tomato-agent-demo check/list` works outside source tree |
 | Portfolio release checks | DONE | 158 final staged files inspected; no release-scanner finding |
 | README internal-link check | DONE | checked by release script |
+| GitHub Actions portable checks | DONE | run 39387986178 succeeded |
+| GitHub Pages deployment | DONE | rerun 39387986218 succeeded after Pages was enabled for workflow builds |
+| Public Pages HTTP smoke | DONE | index, JS, CSS and all five fixtures returned HTTP 200 |
 | DeepSeek online regression for V1.4.5 | NOT_RUN | requires authorization |
 | 48-case independent holdout | NOT_RUN | sealed |
 
-## Before public GitHub publication
+## Public release record
 
-1. Review the final staged explicit allowlist and the candidate audit.
-2. Configure the verified GitHub account identity locally before creating the first commit.
-3. Confirm no full `data/cases`, `outputs/traces`, original images, PDFs, holdout or model weights are tracked.
-4. Re-run `python scripts/portfolio_release_check.py` and `python -m pytest -q`.
-5. Run a history-aware secret scan before any public visibility change.
-6. Keep the repository unlicensed unless the owner makes a separate explicit licensing decision.
+1. Public-display authority was confirmed on 2026-10-20; no reuse license was granted.
+2. The verified GitHub identity was configured only in this repository.
+3. The 158-file allowlist, tests, fixture validation and secret/asset checks passed before publication.
+4. Public repository: `https://github.com/Zhenwei-Chang/tomato-agent`.
+5. Recorded Replay: `https://zhenwei-chang.github.io/tomato-agent/`.
+6. Full research assets and the private holdout remain excluded.
 
 ## Readiness decision
 

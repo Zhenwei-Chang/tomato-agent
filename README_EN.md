@@ -2,9 +2,11 @@
 
 **Evidence-driven LLM Agent with RAG & Historical Memory**
 
-> **Public candidate repository:** this isolated copy includes source code, sanitized Replay fixtures, example configuration, and portfolio documentation only. Research data, model weights, RAG documents, raw traces, and the private holdout are intentionally absent. See [PUBLIC_RELEASE_MANIFEST.md](PUBLIC_RELEASE_MANIFEST.md).
+> **Public portfolio repository:** this isolated release includes source code, sanitized Replay fixtures, example configuration, and portfolio documentation only. Research data, model weights, RAG documents, raw traces, and the private holdout are intentionally absent. See [PUBLIC_RELEASE_MANIFEST.md](PUBLIC_RELEASE_MANIFEST.md).
 
-[中文](README.md) · [Offline Demo](demo/README.md) · [Demo Walkthrough](docs/portfolio/DEMO_WALKTHROUGH.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Evaluation](docs/evaluation/BENCHMARK_SUMMARY.md)
+[![Portable checks](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/ci.yml) [![Recorded Replay](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/pages.yml/badge.svg)](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/pages.yml)
+
+[Live Recorded Replay](https://zhenwei-chang.github.io/tomato-agent/) · [中文](README.md) · [Local Offline Demo](demo/README.md) · [Demo Walkthrough](docs/portfolio/DEMO_WALKTHROUGH.md) · [Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Evaluation](docs/evaluation/BENCHMARK_SUMMARY.md)
 
 Tomato Agent is a public-data-based decision-support prototype that orchestrates typed data, ML/CV, historical-memory, and agricultural knowledge tools. The LLM does **not** calculate plant height or irrigation amounts by language alone: specialized tools produce structured signals, while the Agent plans calls, validates arguments, aggregates evidence, preserves scope, and resolves FULL / PARTIAL / ABSTAIN answers.
 
@@ -37,6 +39,8 @@ flowchart TB
 See the [full architecture](docs/architecture/SYSTEM_ARCHITECTURE.md), [function-calling loop](docs/architecture/FUNCTION_CALLING_FLOW.md), and [provenance model](docs/architecture/EVIDENCE_PROVENANCE.md).
 
 ## Quick Start — Offline Replay
+
+No-install web demo: [https://zhenwei-chang.github.io/tomato-agent/](https://zhenwei-chang.github.io/tomato-agent/). It is explicitly labelled Recorded Replay, makes no DeepSeek call, and does not pretend to support arbitrary live prompts.
 
 Python 3.11+ is sufficient. No API key, model weight, PyTorch install, or 26 GB dataset is required.
 

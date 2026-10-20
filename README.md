@@ -2,9 +2,11 @@
 
 **Evidence-driven LLM Agent with RAG & Historical Memory**
 
-> **Public candidate repository:** this isolated copy contains only source code, sanitized Replay fixtures, example configuration and portfolio documentation. Research data, model weights, RAG documents, raw traces and the private holdout are intentionally absent. See [PUBLIC_RELEASE_MANIFEST.md](PUBLIC_RELEASE_MANIFEST.md).
+> **Public portfolio repository:** this isolated release contains only source code, sanitized Replay fixtures, example configuration and portfolio documentation. Research data, model weights, RAG documents, raw traces and the private holdout are intentionally absent. See [PUBLIC_RELEASE_MANIFEST.md](PUBLIC_RELEASE_MANIFEST.md).
 
-[English](README_EN.md) · [离线 Demo](demo/README.md) · [演示讲解](docs/portfolio/DEMO_WALKTHROUGH.md) · [架构](docs/architecture/SYSTEM_ARCHITECTURE.md) · [评测](docs/evaluation/BENCHMARK_SUMMARY.md) · [面试材料](docs/portfolio/INTERVIEW_PREPARATION.md)
+[![Portable checks](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/ci.yml) [![Recorded Replay](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/pages.yml/badge.svg)](https://github.com/Zhenwei-Chang/tomato-agent/actions/workflows/pages.yml)
+
+[在线 Recorded Replay](https://zhenwei-chang.github.io/tomato-agent/) · [English](README_EN.md) · [本地离线 Demo](demo/README.md) · [演示讲解](docs/portfolio/DEMO_WALKTHROUGH.md) · [架构](docs/architecture/SYSTEM_ARCHITECTURE.md) · [评测](docs/evaluation/BENCHMARK_SUMMARY.md) · [面试材料](docs/portfolio/INTERVIEW_PREPARATION.md)
 
 Tomato Agent 是一个基于公开番茄数据构建的 Agent 工程原型。它通过 Typed Tool Calling 调度结构化数据、传统机器学习、View-level 视觉分析、历史案例记忆和农业知识 RAG，再将证据、范围、可靠性与限制组织成可追溯回答。
 
@@ -45,6 +47,8 @@ flowchart TB
 完整图：[System Architecture](docs/architecture/SYSTEM_ARCHITECTURE.md) · [Function Calling Flow](docs/architecture/FUNCTION_CALLING_FLOW.md) · [Evidence Provenance](docs/architecture/EVIDENCE_PROVENANCE.md)
 
 ## 30 秒离线体验
+
+无需安装的在线展示：[https://zhenwei-chang.github.io/tomato-agent/](https://zhenwei-chang.github.io/tomato-agent/)。这是明确标注的 Recorded Replay，不会调用 DeepSeek，也不接受任意自由文本推理。
 
 要求 Python 3.11+；不需要 API Key、PyTorch、模型权重或 26 GB 原始数据。
 
