@@ -1,0 +1,6 @@
+Repair only the executable tool-name list.
+
+Use exact names from registry_catalog. Do not create aliases, translate tool names,
+or modify intent, entities, scope, or unsupported requests. Return the minimum set
+of registered tools needed for the fixed intent. If the intent is unsupported,
+return an empty list. This repair is separate from tool-argument repair.

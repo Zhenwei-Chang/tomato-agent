@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "growth_prediction",
+  "title": "Plant growth prediction with reliability",
+  "category": "ml_tool_calling",
+  "execution_mode": "recorded_replay",
+  "disclosure": "Sanitized V1.4.4 DeepSeek online development trace (v141_s04). Numerical values are preserved from the frozen result; local paths and call identifiers are removed. V1.4.5 status-contract fixes have not been revalidated online.",
+  "source": {"benchmark": "V1.4.4 DeepSeek Known-10 Online Regression", "case_id": "v141_s04", "provider": "deepseek", "model": "deepseek-flash", "trace_id": "v14-deepseek-v144-v141_s04"},
+  "query": "预测植株 2023-111 从 2023-05-14 起七天后的株高，并评价可靠性。",
+  "outcome": {"status": "PARTIAL", "reliability": "MEDIUM", "summary": "当前株高 29.50 cm、LAI 1.40；模型估计 7 天后株高 42.75 cm。该值是实验性预测，不是未来实测值，也没有校准预测区间。"},
+  "tool_calls": [
+    {"index": 1, "name": "predict_height_t7", "arguments_summary": "plant=2023-111, date=2023-05-14", "status": "success", "scope": "plant", "evidence_count": 4, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 4885.814},
+    {"index": 2, "name": "assess_prediction_reliability", "arguments_summary": "matching plant scope and available inputs", "status": "success", "scope": "plant", "evidence_count": 1, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 0.189}
+  ],
+  "claims": [
+    {"type": "observation", "text": "Current observed height is 29.50 cm.", "support": ["phenotype-canonical"]},
+    {"type": "prediction", "text": "The locked model estimates height at t+7 as 42.75 cm.", "support": ["model-v03-locked-b0"]}
+  ],
+  "evidence": [
+    {"id": "phenotype-canonical", "type": "observation", "source_label": "canonical phenotype table", "scope": "plant", "summary": "Exact-date current height and LAI for plant 2023-111.", "reliability": "MEDIUM"},
+    {"id": "model-v03-locked-b0", "type": "prediction", "source_label": "locked HistGradientBoosting pipeline", "scope": "plant", "summary": "Autoregressive t+7 height estimate: 42.7464 cm.", "reliability": "MEDIUM"},
+    {"id": "reliability-rule-v1", "type": "reliability", "source_label": "rule-based assessment", "scope": "plant", "summary": "Known domain and matching scope; not statistically calibrated.", "reliability": "MEDIUM"}
+  ],
+  "limitations": ["Prediction depends strongly on current height and LAI.", "Strong cross-season sensor domain shift exists.", "No calibrated prediction interval.", "Public research data, not a live greenhouse."],
+  "trace": {"actual_tool_executions": 2, "final_gate": "PARTIAL"}
+}

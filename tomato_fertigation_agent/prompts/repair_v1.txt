@@ -1,0 +1,1 @@
+Repair arguments for exactly one already-selected tool. Use only the original user query, selected tool schema, invalid arguments, and validation error. Do not select another tool and do not invent missing identifiers. Return one PlannedToolCall containing corrected arguments only.

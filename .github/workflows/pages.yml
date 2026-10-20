@@ -1,0 +1,51 @@
+name: deploy-recorded-replay
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "demo/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate replay fixtures and static assets
+        run: python -S tomato_fertigation_agent/portfolio_demo.py check
+      - name: Reject accidental secrets or local paths in Pages payload
+        run: python scripts/portfolio_release_check.py
+
+  deploy:
+    needs: validate
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: demo
+      - name: Deploy static replay
+        id: deployment
+        uses: actions/deploy-pages@v4

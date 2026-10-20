@@ -1,0 +1,30 @@
+version: v1.4.3
+
+workflows:
+  growth_status:
+    enabled: true
+  growth_forecast:
+    enabled: true
+  knowledge_qa:
+    enabled: true
+  comprehensive_diagnosis:
+    enabled: true
+
+reliability:
+  critical_low_caps_overall: true
+  statistically_calibrated: false
+
+conflict:
+  use_existing_case_model_thresholds: true
+  agree_cm: 10.0
+  partial_cm: 20.0
+
+knowledge:
+  top_k: 4
+  minimum_retrieval_score: 3.0
+
+provider_budget:
+  max_calls_per_request: 6
+  max_tool_calls_per_request: 6
+  max_argument_repairs: 2
+  reserve_synthesis_calls: 1

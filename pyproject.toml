@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tomato-fertigation-agent"
+version = "1.4.5"
+description = "Evidence-driven tomato agent with typed tools, RAG, historical memory, provenance, and bounded LLM integration"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2,<3", "PyYAML>=6"]
+
+[project.optional-dependencies]
+local = ["pandas>=2", "numpy>=1.26", "scikit-learn>=1.8,<1.9", "joblib>=1.3", "Pillow>=10"]
+vision = ["torch>=2", "torchvision>=0.15"]
+online = ["openai>=2,<3"]
+test = ["pytest>=8"]
+full = [
+  "pandas>=2",
+  "numpy>=1.26",
+  "scikit-learn>=1.8,<1.9",
+  "joblib>=1.3",
+  "Pillow>=10",
+  "torch>=2",
+  "torchvision>=0.15",
+  "openai>=2,<3",
+]
+
+[project.scripts]
+tomato-tools = "tomato_fertigation_agent.cli:main"
+tomato-agent-demo = "tomato_fertigation_agent.portfolio_demo:main"
+
+[tool.setuptools.packages.find]
+include = ["tomato_fertigation_agent*"]
+
+[tool.setuptools.data-files]
+"share/tomato-agent/demo/fixtures" = ["demo/fixtures/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["online: requires an external LLM API and is skipped by default"]

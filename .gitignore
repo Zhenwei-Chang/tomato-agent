@@ -1,0 +1,42 @@
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Runtime traces and generated evaluation output may contain local paths or
+# provider metadata. Curated portfolio fixtures are kept under demo/fixtures.
+outputs/
+
+# Full historical memory and learned assets are local-only until their source
+# redistribution terms are verified. The small manifest remains documentation.
+data/cases/
+
+# Keep the independent online holdout private; publishing it would destroy its
+# value as an unseen evaluation set. Public CI skips its integrity test when the
+# file is absent.
+evals/v14_online_holdout.jsonl
+
+# Historical phase reports contain workstation paths and raw experiment
+# provenance. Curated public documentation lives in the subdirectories below.
+docs/*.md
+
+# Model/data artifacts should be fetched or rebuilt locally, never committed by
+# accident from sibling research projects.
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.parquet
+
+# Local editor and OS files.
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

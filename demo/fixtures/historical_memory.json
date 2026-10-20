@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "historical_memory",
+  "title": "Historical similar-case memory",
+  "category": "case_memory",
+  "execution_mode": "recorded_replay",
+  "disclosure": "Sanitized V1.4.4 DeepSeek online development trace (v141_s06). Scores and outcomes are preserved; full case tables and local paths are not distributed.",
+  "source": {"benchmark": "V1.4.4 DeepSeek Known-10 Online Regression", "case_id": "v141_s06", "provider": "deepseek", "model": "deepseek-flash", "trace_id": "v14-deepseek-v144-v141_s06"},
+  "query": "寻找与植株 2024-L524 在 2024-11-04 相似且时间上更早的历史案例。",
+  "outcome": {"status": "FULL", "reliability": "LOW", "summary": "返回 5 个时间上更早的跨实体历史案例；相似度约 0.818–0.858，案例 t+7 株高为 210–220 cm。检索置信度为 LOW，不能将相似性解释为因果。"},
+  "tool_calls": [
+    {"index": 1, "name": "find_similar_cases", "arguments_summary": "scope=plant, historical_only=true, cross_entity, top_k=5", "status": "partial", "scope": "plant", "evidence_count": 5, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 86.359}
+  ],
+  "claims": [
+    {"type": "historical_association", "text": "Five earlier cross-entity cases were retrieved; their observed t+7 heights range from 210 to 220 cm.", "support": ["case-1", "case-2", "case-3", "case-4", "case-5"]}
+  ],
+  "evidence": [
+    {"id": "case-1", "type": "historical_case", "source_label": "case_memory_v1.2.0", "scope": "plant", "summary": "2024-L526, 2024-10-27; similarity 0.8581; t+7 height 215 cm; delta +3 cm.", "reliability": "LOW"},
+    {"id": "case-2", "type": "historical_case", "source_label": "case_memory_v1.2.0", "scope": "plant", "summary": "2024-L526, 2024-10-25; similarity 0.8562; t+7 height 210 cm; delta +3 cm.", "reliability": "LOW"},
+    {"id": "case-3", "type": "historical_case", "source_label": "case_memory_v1.2.0", "scope": "plant", "summary": "2024-L526, 2024-10-26; similarity 0.8534; t+7 height 212 cm; delta +2 cm.", "reliability": "LOW"},
+    {"id": "case-4", "type": "historical_case", "source_label": "case_memory_v1.2.0", "scope": "plant", "summary": "2024-L526, 2024-10-28; similarity 0.8323; t+7 height 220 cm; delta +8 cm.", "reliability": "LOW"},
+    {"id": "case-5", "type": "historical_case", "source_label": "case_memory_v1.2.0", "scope": "plant", "summary": "2024-L526, 2024-10-24; similarity 0.8179; t+7 height 210 cm; delta +8 cm.", "reliability": "LOW"}
+  ],
+  "limitations": ["Query is outside at least one 2023 reference feature range.", "Similarity is predictive association, not a causal counterfactual.", "No ML prediction was provided for agreement testing."],
+  "trace": {"actual_tool_executions": 1, "final_gate": "FULL"}
+}

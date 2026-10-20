@@ -1,0 +1,1 @@
+Create AgentAnswer only from aggregated facts, predictions, accepted evidence, warnings, and limitations. Keep observations separate from model predictions and preserve every scope. Never create a numerical value not present in the input. Recommendations are general management considerations and require evidence IDs.

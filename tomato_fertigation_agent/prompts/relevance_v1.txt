@@ -1,0 +1,1 @@
+Judge whether the retrieved chunk is relevant to the query. Use score and surface overlap. Return RELEVANT, PARTIALLY_RELEVANT, or IRRELEVANT with a short reason. This is relevance judgment, not truth verification.

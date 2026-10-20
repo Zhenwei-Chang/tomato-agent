@@ -1,0 +1,27 @@
+name: portable-checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install minimal test dependencies
+        run: python -m pip install -e ".[test]"
+      - name: Validate sanitized release surface
+        run: python scripts/portfolio_release_check.py
+      - name: Run portable tests
+        run: python -m pytest -q
+      - name: Smoke replay without site packages
+        run: python -S tomato_fertigation_agent/portfolio_demo.py check

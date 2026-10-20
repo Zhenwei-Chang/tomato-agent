@@ -1,0 +1,42 @@
+version: v1.2.0
+
+storage:
+  plant_cases: data/cases/plant_cases.csv
+  view_cases: data/cases/view_cases.csv
+  view_embeddings: data/cases/view_case_embeddings.npz
+  normalizers: data/cases/case_normalizers.joblib
+  manifest: data/cases/case_memory_manifest.json
+
+plant:
+  top_k: 5
+  # 5th percentile of Top-1 similarity in the historical cross-entity audit.
+  minimum_similarity: 0.48
+  weights:
+    state: 0.45
+    sensor: 0.35
+    treatment: 0.15
+    variety: 0.05
+
+view:
+  top_k: 5
+  # Rounded below the 5th percentile (0.647) to avoid false precision.
+  minimum_similarity: 0.64
+  weights:
+    image: 0.40
+    sensor: 0.30
+    state: 0.30
+
+defaults:
+  retrieval_mode: historical
+  retrieval_policy: cross_entity
+  historical_only: true
+  exclude_same_entity: true
+
+confidence:
+  high_enabled: false
+  minimum_returned_cases: 2
+  high_outcome_cv: 0.75
+
+agreement:
+  agree_cm: 10.0
+  partial_cm: 20.0

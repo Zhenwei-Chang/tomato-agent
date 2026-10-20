@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "scenario_id": "comprehensive",
+  "title": "Six-tool evidence workflow",
+  "category": "multi_tool_workflow",
+  "execution_mode": "recorded_replay",
+  "disclosure": "Sanitized summary of the frozen V1.4.4 DeepSeek online development trace v141_s08. Tool order, statuses, numerical claims, evidence links, latency, and limitations are preserved; absolute paths and provider identifiers are removed.",
+  "source": {"benchmark": "V1.4.4 DeepSeek Known-10 Online Regression", "case_id": "v141_s08", "provider": "deepseek", "model": "deepseek-flash", "trace_id": "v14-deepseek-v144-v141_s08"},
+  "query": "整合 2023-111 在 2023-05-07 的观测、环境、七日预测、历史案例和水肥知识。",
+  "outcome": {"status": "PARTIAL", "reliability": "LOW", "summary": "观测株高为 20.80 cm；模型估计 7 天后为 34.66 cm。环境与知识证据可用，但未找到可靠历史案例，因此综合结论保持 PARTIAL，不支持直接下发水肥控制量。"},
+  "tool_calls": [
+    {"index": 1, "name": "get_growth_context", "arguments_summary": "plant=2023-111, exact date=2023-05-07", "status": "partial", "scope": "plant", "evidence_count": 3, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 9.217},
+    {"index": 2, "name": "get_sensor_history", "arguments_summary": "7-day window ending 2023-05-07", "status": "success", "scope": "greenhouse", "evidence_count": 1, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 12.371},
+    {"index": 3, "name": "predict_height_t7", "arguments_summary": "plant=2023-111, date=2023-05-07", "status": "success", "scope": "plant", "evidence_count": 4, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 50.459},
+    {"index": 4, "name": "find_similar_cases", "arguments_summary": "historical cross-entity plant cases, top_k=5", "status": "error", "scope": "plant", "evidence_count": 0, "error_code": "NO_RELIABLE_CASES", "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 23.382},
+    {"index": 5, "name": "retrieve_water_fertilizer_knowledge", "arguments_summary": "seedling water-fertilizer context, top_k=6", "status": "success", "scope": "knowledge", "evidence_count": 6, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 34.697},
+    {"index": 6, "name": "assess_prediction_reliability", "arguments_summary": "plant-scope forecast with incomplete critical features", "status": "success", "scope": "plant", "evidence_count": 0, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 0.266}
+  ],
+  "claims": [
+    {"type": "observation", "text": "当前观测株高为 20.80 cm。", "support": ["OBS-1"]},
+    {"type": "prediction", "text": "模型估计 7 天后株高为 34.66 cm。", "support": ["MODEL-1"]},
+    {"type": "knowledge", "text": "育苗和缓苗期应联合观察基质含水与排水、根系建植、根区与空气环境、光照、CO2、冠层状态及传感器位置。", "support": ["KQ017"]},
+    {"type": "recommendation", "text": "继续监测环境与根区代理变量；当前证据不支持直接下发控制量。", "support": ["SENSOR-1", "KQ017"]}
+  ],
+  "evidence": [
+    {"id": "OBS-1", "type": "observation", "source_label": "canonical phenotype", "scope": "plant", "summary": "Height 20.8 cm and LAI 1.39 on 2023-05-07.", "reliability": "MEDIUM"},
+    {"id": "SENSOR-1", "type": "sensor", "source_label": "canonical daily environment", "scope": "greenhouse", "summary": "Seven complete days; mean temperature 23.48 °C, RH 51.48%, VPD 1.43 kPa. Substrate values are global proxies.", "reliability": "MEDIUM"},
+    {"id": "MODEL-1", "type": "prediction", "source_label": "v03_locked_B0", "scope": "plant", "summary": "Experimental t+7 height estimate 34.6554 cm from current height 20.8 cm and LAI 1.39.", "reliability": "MEDIUM"},
+    {"id": "KQ017", "type": "knowledge", "source_label": "commercial greenhouse tomato seedling/transplant guide snapshot", "scope": "knowledge", "summary": "Partially relevant monitoring guidance; locator PDF pp.2–5, 8–10, 15–16.", "reliability": "MEDIUM"},
+    {"id": "RELIABILITY-1", "type": "reliability", "source_label": "rule-based policy v1.3", "scope": "plant", "summary": "LOW because a critical input/evidence type is missing; not statistically calibrated.", "reliability": "LOW"}
+  ],
+  "limitations": ["No reliable historical cases were found.", "Substrate variables are greenhouse-global proxies.", "Autoregressive prediction relies strongly on current phenotype.", "No reliable irrigation-volume or optimal-decision labels.", "Public dataset, not live greenhouse data."],
+  "trace": {"provider_calls": 6, "actual_tool_executions": 6, "input_tokens": 26061, "output_tokens": 2358, "latency_ms": 12362.6381, "evidence_collected": 5, "evidence_referenced": 4, "final_gate": "PARTIAL"}
+}

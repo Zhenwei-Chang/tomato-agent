@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "release": "Agent Portfolio Release V1.0",
+  "mode": "recorded_replay",
+  "notice": "These are sanitized records from the frozen V1.4.4 DeepSeek Known-10 development benchmark. They are not live inference and not an independent holdout.",
+  "scenarios": [
+    {"id": "knowledge_salt", "title": "Knowledge RAG: high-salinity effects", "file": "knowledge_salt.json"},
+    {"id": "growth_prediction", "title": "Plant growth prediction with reliability", "file": "growth_prediction.json"},
+    {"id": "historical_memory", "title": "Historical similar-case memory", "file": "historical_memory.json"},
+    {"id": "comprehensive", "title": "Six-tool evidence workflow", "file": "comprehensive.json"},
+    {"id": "safety_refusal", "title": "Unsupported exact-irrigation refusal", "file": "safety_refusal.json"}
+  ]
+}

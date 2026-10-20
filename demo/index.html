@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Interactive recorded replay of an evidence-driven tomato-domain LLM agent.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>Tomato Agent — Evidence-driven Agent Replay</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#scenario-explorer">Skip to scenario explorer</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Tomato Agent home">
+      <span class="brand-mark" aria-hidden="true">TA</span><span>Tomato Agent</span>
+    </a>
+    <div class="mode-badge"><span class="mode-dot"></span><span class="mode-long">RECORDED REPLAY · OFFLINE</span><span class="mode-short">REPLAY</span></div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">AGENT ENGINEERING PORTFOLIO</p>
+        <h1 id="hero-title">Evidence before answers.</h1>
+        <p class="hero-lead">An evidence-driven LLM agent for tomato growth analysis, combining typed tool calling, knowledge RAG, historical memory and explicit reliability boundaries.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#scenario-explorer">Explore real traces</a>
+          <a class="button secondary" href="#benchmark">View benchmark</a>
+        </div>
+        <p class="hero-disclosure"><strong>Not live inference.</strong> This public page replays five sanitized, frozen V1.4.4 development traces. It sends no data and needs no API key.</p>
+      </div>
+      <div class="hero-system" aria-label="System summary">
+        <div class="system-line"><span>01</span><strong>Plan</strong><small>Request contract &amp; workflow</small></div>
+        <div class="system-line"><span>02</span><strong>Execute</strong><small>Typed tools with bounded calls</small></div>
+        <div class="system-line"><span>03</span><strong>Ground</strong><small>Claims linked to evidence</small></div>
+        <div class="system-line"><span>04</span><strong>Decide</strong><small>FULL / PARTIAL / ABSTAIN</small></div>
+      </div>
+    </section>
+
+    <section class="capability-strip" aria-label="Project capabilities">
+      <article><strong>9</strong><span>Typed tools</span></article>
+      <article><strong>4</strong><span>Controlled workflows</span></article>
+      <article><strong>2</strong><span>Retrieval systems</span></article>
+      <article><strong>100%</strong><span>Grounding on Known-10</span></article>
+    </section>
+
+    <section id="scenario-explorer" class="section-shell" aria-labelledby="scenario-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">INTERACTIVE TRACE EXPLORER</p><h2 id="scenario-title">Five real development scenarios</h2></div>
+        <p>Switch scenarios to inspect the query, final status, model-generated tool calls, accepted evidence and explicit limitations.</p>
+      </div>
+      <div id="scenario-tabs" class="scenario-tabs" role="tablist" aria-label="Recorded scenarios"></div>
+
+      <div class="query-panel">
+        <div><p class="micro-label">USER QUERY</p><p id="query" class="query-text"></p></div>
+        <button id="copy-query" class="icon-button" type="button">Copy query</button>
+      </div>
+      <div class="result-meta">
+        <div><span>Execution</span><strong id="execution-mode">RECORDED_REPLAY</strong></div>
+        <div><span>Answerability</span><strong id="status" class="status-chip"></strong></div>
+        <div><span>Reliability</span><strong id="reliability" class="reliability-chip"></strong></div>
+        <div><span>Source case</span><strong id="case-id"></strong></div>
+      </div>
+
+      <div class="workspace-grid">
+        <section class="panel answer-panel" aria-labelledby="answer-title">
+          <div class="panel-heading"><div><p class="micro-label">STRUCTURED OUTPUT</p><h3 id="answer-title">Agent answer</h3></div><span id="source-model" class="meta-tag"></span></div>
+          <p id="summary" class="answer-summary"></p>
+          <div class="subheading"><span>Grounded claims</span><small>select a claim to trace its support</small></div>
+          <div id="claims" class="claim-list"></div>
+        </section>
+
+        <section class="panel trace-panel" aria-labelledby="trace-title">
+          <div class="panel-heading">
+            <div><p class="micro-label">EXECUTION TRACE</p><h3 id="trace-title">Tool timeline</h3></div>
+            <button id="copy-trace" class="icon-button" type="button">Copy trace</button>
+          </div>
+          <p id="trace-meta" class="panel-note"></p>
+          <ol id="tools" class="timeline"></ol>
+        </section>
+      </div>
+
+      <section class="panel provenance-panel" aria-labelledby="evidence-title">
+        <div class="panel-heading"><div><p class="micro-label">PROVENANCE</p><h3 id="evidence-title">Evidence explorer</h3></div><span id="evidence-count" class="meta-tag"></span></div>
+        <p class="panel-note">Claim → Evidence ID → Tool result → scoped source. Highlighted cards support the selected claim.</p>
+        <div id="evidence" class="evidence-grid"></div>
+      </section>
+
+      <section class="panel limitation-panel" aria-labelledby="limitations-title">
+        <div class="panel-heading"><div><p class="micro-label">DECISION BOUNDARY</p><h3 id="limitations-title">Limitations kept visible</h3></div></div>
+        <ul id="limitations" class="limitation-list"></ul>
+        <details class="disclosure-box"><summary>Fixture disclosure</summary><p id="disclosure"></p></details>
+      </section>
+    </section>
+
+    <section id="benchmark" class="benchmark-section" aria-labelledby="benchmark-title">
+      <div class="section-heading light">
+        <div><p class="eyebrow">REAL PROVIDER EVALUATION</p><h2 id="benchmark-title">DeepSeek V1.4.4 benchmark</h2></div>
+        <p><strong>10 known development cases</strong> — not an independent holdout and not an agriculture decision-accuracy score.</p>
+      </div>
+      <div class="metric-grid">
+        <article><span>Tool Selection F1</span><strong>96.67%</strong></article>
+        <article><span>Argument Accuracy</span><strong>100%</strong></article>
+        <article><span>Evidence Grounding</span><strong>100%</strong></article>
+        <article><span>Provenance Complete</span><strong>100%</strong></article>
+      </div>
+      <div class="benchmark-table-wrap">
+        <table>
+          <thead><tr><th>Review layer</th><th>Result</th><th>Interpretation</th></tr></thead>
+          <tbody>
+            <tr><td>Human review</td><td>8 / 10 PASS</td><td>Two responses remained PARTIAL.</td></tr>
+            <tr><td>Strict automatic</td><td>5 / 10 PASS</td><td>Status and sequence rules were intentionally strict.</td></tr>
+            <tr><td>Scope violations</td><td>0</td><td>No view-level result was presented as plant-level.</td></tr>
+            <tr><td>Unsupported numerical claims</td><td>0</td><td>No ungrounded control quantity was emitted.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="benchmark-warning"><strong>Evaluation boundary:</strong> V1.4.5 fixes passed offline regression only. The independent 48-case holdout remains <code>NOT_RUN</code>.</div>
+    </section>
+
+    <section class="architecture-section" aria-labelledby="architecture-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">CONTROLLED ORCHESTRATION</p><h2 id="architecture-title">From request to traceable answer</h2></div>
+        <p>The LLM selects and sequences tools; deterministic contracts validate execution, evidence and answerability.</p>
+      </div>
+      <div class="architecture-flow" aria-label="Tomato Agent architecture flow">
+        <div class="arch-node strong">User request</div><span>→</span>
+        <div class="arch-node">DeepSeek<br><small>router &amp; tool calls</small></div><span>→</span>
+        <div class="arch-node">Typed registry<br><small>9 bounded tools</small></div><span>→</span>
+        <div class="arch-node">Evidence store<br><small>RAG · cases · ML</small></div><span>→</span>
+        <div class="arch-node strong">Grounded answer<br><small>scope · reliability</small></div>
+      </div>
+      <div class="architecture-notes">
+        <article><strong>Knowledge RAG</strong><p>Retrieves agronomic evidence and preserves applicability boundaries.</p></article>
+        <article><strong>Historical memory</strong><p>Finds leakage-safe earlier cases with observed outcomes; similarity is not causality.</p></article>
+        <article><strong>Model tools</strong><p>Produce experimental numerical signals; the LLM does not calculate plant growth itself.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div><strong>Tomato Agent</strong><span>Public-data decision-support prototype</span></div>
+    <div><span>No API calls from this page</span><span>·</span><span>No source dataset included</span></div>
+  </footer>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
