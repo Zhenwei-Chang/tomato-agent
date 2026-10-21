@@ -101,8 +101,8 @@ def test_static_demo_exposes_portfolio_interactions_and_truthfulness_labels():
     html = (root / "demo" / "index.html").read_text(encoding="utf-8")
     javascript = (root / "demo" / "app.js").read_text(encoding="utf-8")
     assert "RECORDED REPLAY · OFFLINE" in html
-    assert "10 known development cases" in html
-    assert "48-case holdout remains" in html
+    assert "10 条已知开发案例" in html
+    assert "48-case Holdout 仍为" in html
     for required_id in (
         'id="scenario-tabs"', 'id="copy-query"', 'id="copy-trace"',
         'id="tools"', 'id="evidence"', 'id="benchmark"',

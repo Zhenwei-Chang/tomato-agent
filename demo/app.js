@@ -1,183 +1,270 @@
-const $ = (id) => document.getElementById(id);
-const esc = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const titleCase = (value) => String(value ?? "").replaceAll("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+const $ = (selector) => document.querySelector(selector);
 
-let scenarioIndex = [];
+const esc = (value) => String(value ?? "")
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
+  .replaceAll("'", "&#039;");
+
+const labels = {
+  status: { FULL: "完整回答", PARTIAL: "部分回答", ABSTAIN: "拒绝作答" },
+  reliability: { HIGH: "高", MEDIUM: "中", LOW: "低", UNKNOWN: "未知" },
+  scope: {
+    plant: "单株",
+    view: "视角 / 小区",
+    group: "组",
+    greenhouse: "温室",
+    treatment: "处理",
+    dataset: "数据集",
+    knowledge: "知识"
+  },
+  type: {
+    observation: "观测",
+    prediction: "预测",
+    knowledge: "知识",
+    recommendation: "建议",
+    reliability: "可靠性",
+    historical_association: "历史关联",
+    historical_case: "历史案例",
+    sensor: "传感器",
+    safety: "安全边界"
+  },
+  toolStatus: { success: "成功", partial: "部分成功", error: "失败" },
+  dispatch: {
+    MODEL_GENERATED_TOOL_CALL: "模型生成调用",
+    WORKFLOW_DISPATCHED_TOOL: "工作流调度",
+    DETERMINISTIC_FALLBACK: "确定性回退",
+    NOT_RECORDED: "未记录"
+  }
+};
+
+const scenarioDescriptions = {
+  knowledge_salt: "知识 RAG",
+  growth_prediction: "生长预测",
+  historical_memory: "历史案例",
+  comprehensive: "综合分析",
+  safety_refusal: "安全拒答"
+};
+
+let scenarioIndex = null;
 let currentScenario = null;
+let selectedClaim = null;
+
+function localLabel(group, value) {
+  return labels[group]?.[value] ?? value ?? "未记录";
+}
 
 function showToast(message) {
-  const toast = $("toast");
+  const toast = $("#toast");
   toast.textContent = message;
-  toast.classList.add("visible");
+  toast.classList.add("show");
   window.clearTimeout(showToast.timer);
-  showToast.timer = window.setTimeout(() => toast.classList.remove("visible"), 1800);
+  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
 }
 
-async function copyText(text, label) {
+async function copyText(text, successMessage) {
   try {
     await navigator.clipboard.writeText(text);
-  } catch (_) {
-    const node = document.createElement("textarea");
-    node.value = text;
-    node.setAttribute("readonly", "");
-    node.style.position = "fixed";
-    node.style.opacity = "0";
-    document.body.appendChild(node);
-    node.select();
+  } catch (_error) {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.append(area);
+    area.select();
     document.execCommand("copy");
-    node.remove();
+    area.remove();
   }
-  showToast(`${label} copied`);
+  showToast(successMessage);
 }
 
-function scenarioDescription(entry) {
-  const descriptions = {
-    knowledge_salt: "RAG relevance gate and evidence-based abstention",
-    growth_prediction: "ML prediction with required reliability assessment",
-    historical_memory: "Leakage-safe retrieval of earlier observed outcomes",
-    comprehensive: "Six model-generated calls across four evidence types",
-    safety_refusal: "Unsupported precision-control request rejected safely"
-  };
-  return descriptions[entry.id] || "Recorded agent scenario";
+function formatLatency(value) {
+  if (value === "NOT_RECORDED" || value === null || value === undefined) return "未记录";
+  return `${Number(value).toFixed(value >= 100 ? 0 : 1)} ms`;
 }
 
 function renderTabs(activeId) {
-  $("scenario-tabs").innerHTML = scenarioIndex.map((entry, index) => `
-    <button type="button" role="tab" aria-selected="${entry.id === activeId}" tabindex="${entry.id === activeId ? 0 : -1}"
-      data-scenario="${esc(entry.id)}">
-      <span class="scenario-number">0${index + 1}</span>
-      <span><strong>${esc(entry.title)}</strong><small>${esc(scenarioDescription(entry))}</small></span>
-    </button>`).join("");
-  document.querySelectorAll("[data-scenario]").forEach(button => {
-    button.addEventListener("click", () => loadScenario(button.dataset.scenario));
+  const root = $("#scenario-tabs");
+  root.innerHTML = "";
+  scenarioIndex.scenarios.forEach((entry, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.role = "tab";
+    button.className = `scenario-tab${entry.id === activeId ? " active" : ""}`;
+    button.setAttribute("aria-selected", entry.id === activeId ? "true" : "false");
+    button.dataset.scenario = entry.id;
+    button.innerHTML = `<span>${String(index + 1).padStart(2, "0")}</span><strong>${esc(scenarioDescriptions[entry.id] || entry.title)}</strong>`;
+    button.addEventListener("click", () => loadScenario(entry.id));
+    root.append(button);
   });
 }
 
 function renderClaims(claims) {
+  const root = $("#claims");
+  root.innerHTML = "";
+  selectedClaim = null;
+
   if (!claims.length) {
-    $("claims").innerHTML = `<div class="empty-state"><strong>No claim passed the evidence gate.</strong><span>The system abstained instead of filling the gap.</span></div>`;
+    root.innerHTML = '<p class="empty-state">该场景没有可陈述的事实主张；系统选择保留或拒答。</p>';
     return;
   }
-  $("claims").innerHTML = claims.map((claim, index) => `
-    <button type="button" class="claim-card" data-support="${esc((claim.support || []).join(","))}">
+
+  claims.forEach((claim, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "claim-card";
+    button.dataset.support = JSON.stringify(claim.support || []);
+    button.innerHTML = `
       <span class="claim-index">${String(index + 1).padStart(2, "0")}</span>
-      <span><small>${esc(titleCase(claim.type))}</small><strong>${esc(claim.text)}</strong><em>${claim.support?.length ? esc(claim.support.join(" · ")) : "NO EVIDENCE ID"}</em></span>
-    </button>`).join("");
-  document.querySelectorAll(".claim-card").forEach(button => {
-    button.addEventListener("click", () => highlightEvidence(button));
+      <span><small>${esc(localLabel("type", claim.type))}</small><strong>${esc(claim.text)}</strong><em>证据：${esc((claim.support || []).join(" · ") || "未关联")}</em></span>`;
+    button.addEventListener("click", () => {
+      selectedClaim = index;
+      root.querySelectorAll(".claim-card").forEach((item, itemIndex) => item.classList.toggle("selected", itemIndex === index));
+      highlightEvidence(claim.support || []);
+    });
+    root.append(button);
   });
 }
 
-function highlightEvidence(claimButton) {
-  const ids = new Set((claimButton.dataset.support || "").split(",").filter(Boolean));
-  document.querySelectorAll(".claim-card").forEach(node => node.classList.toggle("selected", node === claimButton));
-  document.querySelectorAll(".evidence-card").forEach(card => card.classList.toggle("highlighted", ids.has(card.dataset.evidenceId)));
-  const first = [...document.querySelectorAll(".evidence-card.highlighted")][0];
-  if (first) first.scrollIntoView({behavior: "smooth", block: "nearest"});
-}
+function renderTools(toolCalls) {
+  const root = $("#tools");
+  root.innerHTML = "";
 
-function renderTools(data) {
-  const tools = data.tool_calls || [];
-  $("trace-meta").textContent = tools.length
-    ? `${tools.length} recorded call${tools.length === 1 ? "" : "s"} · ${data.trace?.provider_calls ?? "NOT_RECORDED"} provider call${data.trace?.provider_calls === 1 ? "" : "s"}`
-    : "Request rejected before tool dispatch.";
-  if (!tools.length) {
-    $("tools").innerHTML = `<li class="timeline-empty"><span>0</span><div><strong>No tool execution</strong><p>Safety policy stopped the unsupported request before dispatch.</p></div></li>`;
+  if (!toolCalls.length) {
+    root.innerHTML = '<li class="timeline-empty"><strong>未执行工具</strong><p>系统在证据不足或请求越界时，可以直接拒绝生成无依据数值。</p></li>';
     return;
   }
-  $("tools").innerHTML = tools.map(tool => {
-    const source = tool.dispatch_source || "NOT_RECORDED";
-    const latency = Number.isFinite(tool.latency_ms) ? `${tool.latency_ms.toFixed(3)} ms` : "NOT_RECORDED";
-    return `<li class="timeline-item" data-status="${esc(tool.status)}">
-      <span class="timeline-index">${tool.index}</span>
-      <details ${tool.index === 1 ? "open" : ""}>
-        <summary>
-          <span><strong>${esc(tool.name)}</strong><small>${esc(tool.arguments_summary)}</small></span>
-          <span class="tool-status">${esc(tool.status)}</span>
-        </summary>
+
+  toolCalls.forEach((call) => {
+    const item = document.createElement("li");
+    item.className = "timeline-item";
+    item.dataset.status = call.status;
+    item.innerHTML = `
+      <span class="timeline-index">${String(call.index).padStart(2, "0")}</span>
+      <details>
+        <summary><span><strong><code>${esc(call.name)}</code></strong><small>${esc(call.arguments_summary)}</small></span><span class="tool-status">${esc(localLabel("toolStatus", call.status))}</span></summary>
         <div class="tool-detail-grid">
-          <div><span>Dispatch source</span><strong>${esc(source)}</strong></div>
-          <div><span>Scope</span><strong>${esc(tool.scope)}</strong></div>
-          <div><span>Evidence returned</span><strong>${esc(tool.evidence_count ?? "NOT_RECORDED")}</strong></div>
-          <div><span>Tool latency</span><strong>${esc(latency)}</strong></div>
-          <div><span>Error</span><strong>${esc(tool.error_code || "NONE")}</strong></div>
-          <div><span>Execution source</span><strong>LOCAL TOOL ADAPTER</strong></div>
+          <div><span>调用来源</span><strong>${esc(localLabel("dispatch", call.dispatch_source))}<br>${esc(call.dispatch_source)}</strong></div>
+          <div><span>作用范围</span><strong>${esc(localLabel("scope", call.scope))} · ${esc(call.scope)}</strong></div>
+          <div><span>证据数量</span><strong>${esc(call.evidence_count ?? 0)}</strong></div>
+          <div><span>耗时</span><strong>${esc(formatLatency(call.latency_ms))}</strong></div>
+          <div><span>错误代码</span><strong>${esc(call.error_code || "无")}</strong></div>
         </div>
-      </details>
-    </li>`;
-  }).join("");
+      </details>`;
+    root.append(item);
+  });
 }
 
 function renderEvidence(evidence) {
-  $("evidence-count").textContent = `${evidence.length} accepted item${evidence.length === 1 ? "" : "s"}`;
+  const root = $("#evidence");
+  root.innerHTML = "";
+  $("#evidence-count").textContent = `${evidence.length} 条证据`;
+
   if (!evidence.length) {
-    $("evidence").innerHTML = `<div class="empty-state wide"><strong>No accepted claim-supporting evidence.</strong><span>Retrieved candidates may exist, but none passed the relevance and sufficiency gate.</span></div>`;
+    root.innerHTML = '<p class="empty-state">没有可用于支撑结论的证据。</p>';
     return;
   }
-  $("evidence").innerHTML = evidence.map(item => `
-    <details class="evidence-card" data-evidence-id="${esc(item.id)}">
-      <summary><span class="evidence-type">${esc(item.type)}</span><strong>${esc(item.id)}</strong><span class="scope-tag">${esc(item.scope)}</span></summary>
+
+  evidence.forEach((item) => {
+    const card = document.createElement("details");
+    card.className = "evidence-card";
+    card.dataset.evidenceId = item.id;
+    card.innerHTML = `
+      <summary><strong>${esc(item.id)}</strong><span class="evidence-type">${esc(localLabel("type", item.type))}</span><span class="scope-tag">${esc(localLabel("scope", item.scope))}</span></summary>
       <p>${esc(item.summary)}</p>
-      <dl><div><dt>Source</dt><dd>${esc(item.source_label)}</dd></div><div><dt>Reliability</dt><dd>${esc(item.reliability)}</dd></div></dl>
-    </details>`).join("");
+      <dl>
+        <div><dt>来源</dt><dd>${esc(item.source_label)}</dd></div>
+        <div><dt>范围</dt><dd>${esc(localLabel("scope", item.scope))} · ${esc(item.scope)}</dd></div>
+        <div><dt>可靠性</dt><dd>${esc(localLabel("reliability", item.reliability))} · ${esc(item.reliability)}</dd></div>
+      </dl>`;
+    root.append(card);
+  });
 }
 
-function traceSummary(data) {
-  return JSON.stringify({
-    disclosure: "SANITIZED RECORDED REPLAY — NOT LIVE INFERENCE",
-    scenario_id: data.scenario_id,
-    source: data.source,
-    outcome: data.outcome,
-    tool_calls: data.tool_calls,
-    claims: data.claims,
-    evidence: data.evidence,
-    trace: data.trace
-  }, null, 2);
+function highlightEvidence(ids) {
+  const wanted = new Set(ids);
+  document.querySelectorAll(".evidence-card").forEach((card) => {
+    const active = wanted.has(card.dataset.evidenceId);
+    card.classList.toggle("highlight", active);
+    card.classList.toggle("highlighted", active);
+    if (active) {
+      card.open = true;
+    }
+  });
+  const first = document.querySelector(".evidence-card.highlighted");
+  first?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function renderLimitations(limitations) {
+  const root = $("#limitations");
+  root.innerHTML = limitations.length
+    ? limitations.map((item) => `<li>${esc(item)}</li>`).join("")
+    : "<li>该记录未附加额外限制。</li>";
+}
+
+function traceSummary(scenario) {
+  const lines = [
+    "Tomato Agent · 已录制回放",
+    `场景：${scenario.title}`,
+    `问题：${scenario.query}`,
+    `状态：${scenario.outcome.status} / 可靠性：${scenario.outcome.reliability}`,
+    "",
+    "工具调用："
+  ];
+  if (!scenario.tool_calls.length) lines.push("- 未执行工具");
+  scenario.tool_calls.forEach((call) => {
+    lines.push(`${call.index}. ${call.name} | ${call.dispatch_source} | ${call.status} | ${call.arguments_summary}`);
+  });
+  lines.push("", `结论：${scenario.outcome.summary}`, "", `来源：${scenario.source.benchmark} / ${scenario.source.case_id}`);
+  return lines.join("\n");
+}
+
+function renderScenario(scenario) {
+  currentScenario = scenario;
+  renderTabs(scenario.scenario_id);
+  $("#query").textContent = scenario.query;
+  $("#execution-mode").textContent = "已录制回放";
+  $("#status").textContent = `${localLabel("status", scenario.outcome.status)} · ${scenario.outcome.status}`;
+  $("#status").dataset.status = scenario.outcome.status;
+  $("#reliability").textContent = `${localLabel("reliability", scenario.outcome.reliability)} · ${scenario.outcome.reliability}`;
+  $("#reliability").dataset.level = scenario.outcome.reliability;
+  $("#case-id").textContent = scenario.source.case_id;
+  $("#source-model").textContent = `${scenario.source.model} · ${scenario.source.provider}`;
+  $("#summary").textContent = scenario.outcome.summary;
+  $("#disclosure").textContent = scenario.disclosure;
+
+  const trace = scenario.trace || {};
+  const toolCount = scenario.tool_calls.length;
+  const latency = trace.latency_ms === undefined ? "未记录" : formatLatency(trace.latency_ms);
+  $("#trace-meta").textContent = `${toolCount} 次工具执行 · ${trace.evidence_collected ?? scenario.evidence.length} 条证据 · 总耗时 ${latency}`;
+
+  renderClaims(scenario.claims || []);
+  renderTools(scenario.tool_calls || []);
+  renderEvidence(scenario.evidence || []);
+  renderLimitations(scenario.limitations || []);
 }
 
 async function loadScenario(id) {
-  const entry = scenarioIndex.find(item => item.id === id) || scenarioIndex[0];
+  const entry = scenarioIndex.scenarios.find((item) => item.id === id);
+  if (!entry) throw new Error(`未知场景：${id}`);
   const response = await fetch(`fixtures/${entry.file}`);
-  if (!response.ok) throw new Error(`Fixture request failed (${response.status})`);
-  const data = await response.json();
-  currentScenario = data;
-  const preservedAnchor = new Set(["scenario-explorer", "evidence-title", "benchmark", "architecture-title"])
-    .has(window.location.hash.slice(1)) ? window.location.hash : "";
-  window.history.replaceState(null, "", `${window.location.pathname}?scenario=${encodeURIComponent(data.scenario_id)}${preservedAnchor}`);
-  renderTabs(data.scenario_id);
-  $("query").textContent = data.query;
-  $("summary").textContent = data.outcome.summary;
-  $("execution-mode").textContent = data.execution_mode.toUpperCase();
-  $("status").textContent = data.outcome.status;
-  $("status").dataset.status = data.outcome.status;
-  $("reliability").textContent = data.outcome.reliability;
-  $("reliability").dataset.level = data.outcome.reliability;
-  $("case-id").textContent = data.source.case_id;
-  $("source-model").textContent = `${data.source.provider} · ${data.source.model}`;
-  $("disclosure").textContent = data.disclosure;
-  renderClaims(data.claims || []);
-  renderTools(data);
-  renderEvidence(data.evidence || []);
-  $("limitations").innerHTML = (data.limitations || []).map(item => `<li>${esc(item)}</li>`).join("");
+  if (!response.ok) throw new Error(`无法加载场景：${entry.file}`);
+  renderScenario(await response.json());
 }
 
-async function boot() {
+async function init() {
   const response = await fetch("fixtures/index.json");
-  if (!response.ok) throw new Error(`Scenario index request failed (${response.status})`);
-  const index = await response.json();
-  scenarioIndex = index.scenarios;
-  const requested = new URLSearchParams(window.location.search).get("scenario") || window.location.hash.slice(1);
-  await loadScenario(scenarioIndex.some(item => item.id === requested) ? requested : scenarioIndex[0].id);
-  const anchor = window.location.hash.slice(1);
-  if (anchor) {
-    document.documentElement.style.scrollBehavior = "auto";
-    document.getElementById(anchor)?.scrollIntoView({ block: "start" });
-    document.documentElement.style.scrollBehavior = "";
-  }
-  $("copy-query").addEventListener("click", () => copyText(currentScenario.query, "Query"));
-  $("copy-trace").addEventListener("click", () => copyText(traceSummary(currentScenario), "Sanitized trace"));
+  if (!response.ok) throw new Error("无法加载演示场景索引");
+  scenarioIndex = await response.json();
+  await loadScenario("comprehensive");
+
+  $("#copy-query").addEventListener("click", () => copyText(currentScenario.query, "问题已复制"));
+  $("#copy-trace").addEventListener("click", () => copyText(traceSummary(currentScenario), "脱敏 Trace 已复制"));
 }
 
-boot().catch(error => {
-  document.querySelector("main").innerHTML = `<section class="fatal-error"><strong>Demo load failed.</strong><p>${esc(error.message)}</p><p>Start it with <code>python demo/app.py</code>; do not open the HTML file directly.</p></section>`;
+init().catch((error) => {
+  console.error(error);
+  $("#scenario-tabs").innerHTML = '<p class="fatal-error">场景加载失败。请通过本地静态服务器打开本页面，而不是直接双击 HTML 文件。</p>';
 });

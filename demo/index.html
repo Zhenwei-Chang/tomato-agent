@@ -1,79 +1,79 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Interactive recorded replay of an evidence-driven tomato-domain LLM agent.">
+  <meta name="description" content="番茄水肥智能体：可追溯的工具调用、知识检索、历史案例与可靠性评估演示。">
+  <meta name="theme-color" content="#173f32">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <title>Tomato Agent — Evidence-driven Agent Replay</title>
+  <title>番茄水肥智能体 · 证据驱动 Agent 演示</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#scenario-explorer">Skip to scenario explorer</a>
+  <a class="skip-link" href="#scenario-explorer">跳到场景演示</a>
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="Tomato Agent home">
-      <span class="brand-mark" aria-hidden="true">TA</span><span>Tomato Agent</span>
+    <a class="brand" href="#top" aria-label="返回首页">
+      <span class="brand-mark" aria-hidden="true"><i></i></span>
+      <span><strong>番茄水肥智能体</strong><small>TOMATO AGENT</small></span>
     </a>
-    <div class="mode-badge"><span class="mode-dot"></span><span class="mode-long">RECORDED REPLAY · OFFLINE</span><span class="mode-short">REPLAY</span></div>
+    <nav class="top-nav" aria-label="页面导航">
+      <a href="#scenario-explorer">演示</a><a href="#benchmark">评测</a><a href="#architecture">架构</a>
+    </nav>
+    <div class="mode-badge" aria-label="RECORDED REPLAY · OFFLINE"><span class="mode-dot"></span><span>已录制回放 · 离线</span></div>
   </header>
 
   <main id="top">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow">AGENT ENGINEERING PORTFOLIO</p>
-        <h1 id="hero-title">Evidence before answers.</h1>
-        <p class="hero-lead">An evidence-driven LLM agent for tomato growth analysis, combining typed tool calling, knowledge RAG, historical memory and explicit reliability boundaries.</p>
+        <p class="eyebrow">EVIDENCE-DRIVEN AGENT · 作品集演示</p>
+        <h1 id="hero-title">先取证，<br><em>再回答。</em></h1>
+        <p class="hero-lead">一个面向番茄生长分析的证据驱动智能体：由大模型选择工具，由专业工具计算事实，再用证据、范围与可靠性约束最终回答。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#scenario-explorer">Explore real traces</a>
-          <a class="button secondary" href="#benchmark">View benchmark</a>
+          <a class="button primary" href="#scenario-explorer">查看真实 Trace <span>↘</span></a>
+          <a class="button secondary" href="#benchmark">查看评测结果</a>
         </div>
-        <p class="hero-disclosure"><strong>Not live inference.</strong> This public page replays five sanitized, frozen V1.4.4 development traces. It sends no data and needs no API key.</p>
+        <p class="hero-disclosure"><strong>这不是实时推理。</strong> 页面回放 5 条已脱敏、已冻结的 V1.4.4 开发记录；不上传数据，也不需要 API Key。</p>
       </div>
-      <div class="hero-system" aria-label="System summary">
-        <div class="system-line"><span>01</span><strong>Plan</strong><small>Request contract &amp; workflow</small></div>
-        <div class="system-line"><span>02</span><strong>Execute</strong><small>Typed tools with bounded calls</small></div>
-        <div class="system-line"><span>03</span><strong>Ground</strong><small>Claims linked to evidence</small></div>
-        <div class="system-line"><span>04</span><strong>Decide</strong><small>FULL / PARTIAL / ABSTAIN</small></div>
+      <div class="hero-metrics" aria-label="项目能力概览">
+        <article><span>原子工具</span><strong>9</strong><small>Pydantic Typed Tools</small></article>
+        <article><span>受控工作流</span><strong>4</strong><small>有界路由与执行</small></article>
+        <article><span>检索系统</span><strong>2</strong><small>知识 RAG + 历史记忆</small></article>
+        <article><span>回答边界</span><strong class="status-text">FULL / PARTIAL / ABSTAIN</strong><small>证据不足时保留或拒答</small></article>
       </div>
-    </section>
-
-    <section class="capability-strip" aria-label="Project capabilities">
-      <article><strong>9</strong><span>Typed tools</span></article>
-      <article><strong>4</strong><span>Controlled workflows</span></article>
-      <article><strong>2</strong><span>Retrieval systems</span></article>
-      <article><strong>100%</strong><span>Grounding on Known-10</span></article>
     </section>
 
     <section id="scenario-explorer" class="section-shell" aria-labelledby="scenario-title">
       <div class="section-heading">
-        <div><p class="eyebrow">INTERACTIVE TRACE EXPLORER</p><h2 id="scenario-title">Five real development scenarios</h2></div>
-        <p>Switch scenarios to inspect the query, final status, model-generated tool calls, accepted evidence and explicit limitations.</p>
+        <div><p class="eyebrow">RECORDED SCENARIOS</p><h2 id="scenario-title">五个场景，看懂 Agent 如何工作</h2></div>
+        <p>选择场景，查看问题、工具调用、结构化回答、证据来源和明确保留的限制。</p>
       </div>
-      <div id="scenario-tabs" class="scenario-tabs" role="tablist" aria-label="Recorded scenarios"></div>
+      <div id="scenario-tabs" class="scenario-tabs" role="tablist" aria-label="已录制演示场景"></div>
 
-      <div class="query-panel">
-        <div><p class="micro-label">USER QUERY</p><p id="query" class="query-text"></p></div>
-        <button id="copy-query" class="icon-button" type="button">Copy query</button>
-      </div>
-      <div class="result-meta">
-        <div><span>Execution</span><strong id="execution-mode">RECORDED_REPLAY</strong></div>
-        <div><span>Answerability</span><strong id="status" class="status-chip"></strong></div>
-        <div><span>Reliability</span><strong id="reliability" class="reliability-chip"></strong></div>
-        <div><span>Source case</span><strong id="case-id"></strong></div>
-      </div>
+      <article class="scenario-console">
+        <div class="query-panel">
+          <div><p class="micro-label">用户问题</p><p id="query" class="query-text"></p></div>
+          <button id="copy-query" class="icon-button inverse" type="button">复制问题</button>
+        </div>
+        <div class="result-meta">
+          <div><span>执行方式</span><strong id="execution-mode"></strong></div>
+          <div><span>回答状态</span><strong id="status" class="status-chip"></strong></div>
+          <div><span>可靠性</span><strong id="reliability" class="reliability-chip"></strong></div>
+          <div><span>来源案例</span><strong id="case-id"></strong></div>
+        </div>
+      </article>
 
       <div class="workspace-grid">
         <section class="panel answer-panel" aria-labelledby="answer-title">
-          <div class="panel-heading"><div><p class="micro-label">STRUCTURED OUTPUT</p><h3 id="answer-title">Agent answer</h3></div><span id="source-model" class="meta-tag"></span></div>
+          <div class="panel-heading"><div><p class="micro-label">结构化回答</p><h3 id="answer-title">Agent 结论</h3></div><span id="source-model" class="meta-tag"></span></div>
           <p id="summary" class="answer-summary"></p>
-          <div class="subheading"><span>Grounded claims</span><small>select a claim to trace its support</small></div>
+          <div class="subheading"><span>有证据支撑的主张</span><small>点击主张，定位支持证据</small></div>
           <div id="claims" class="claim-list"></div>
         </section>
 
         <section class="panel trace-panel" aria-labelledby="trace-title">
           <div class="panel-heading">
-            <div><p class="micro-label">EXECUTION TRACE</p><h3 id="trace-title">Tool timeline</h3></div>
-            <button id="copy-trace" class="icon-button" type="button">Copy trace</button>
+            <div><p class="micro-label">执行轨迹</p><h3 id="trace-title">工具调用时间线</h3></div>
+            <button id="copy-trace" class="icon-button" type="button">复制脱敏 Trace</button>
           </div>
           <p id="trace-meta" class="panel-note"></p>
           <ol id="tools" class="timeline"></ol>
@@ -81,66 +81,61 @@
       </div>
 
       <section class="panel provenance-panel" aria-labelledby="evidence-title">
-        <div class="panel-heading"><div><p class="micro-label">PROVENANCE</p><h3 id="evidence-title">Evidence explorer</h3></div><span id="evidence-count" class="meta-tag"></span></div>
-        <p class="panel-note">Claim → Evidence ID → Tool result → scoped source. Highlighted cards support the selected claim.</p>
+        <div class="panel-heading"><div><p class="micro-label">证据与来源</p><h3 id="evidence-title">Evidence Explorer</h3></div><span id="evidence-count" class="meta-tag"></span></div>
+        <p class="panel-note">主张 → Evidence ID → 工具结果 → 有范围约束的数据、模型、案例或知识来源。高亮卡片支撑当前选中的主张。</p>
         <div id="evidence" class="evidence-grid"></div>
       </section>
 
       <section class="panel limitation-panel" aria-labelledby="limitations-title">
-        <div class="panel-heading"><div><p class="micro-label">DECISION BOUNDARY</p><h3 id="limitations-title">Limitations kept visible</h3></div></div>
+        <div class="panel-heading"><div><p class="micro-label">决策边界</p><h3 id="limitations-title">系统明确保留的限制</h3></div></div>
         <ul id="limitations" class="limitation-list"></ul>
-        <details class="disclosure-box"><summary>Fixture disclosure</summary><p id="disclosure"></p></details>
+        <details class="disclosure-box"><summary>查看回放数据说明</summary><p id="disclosure"></p></details>
       </section>
     </section>
 
     <section id="benchmark" class="benchmark-section" aria-labelledby="benchmark-title">
-      <div class="section-heading light">
-        <div><p class="eyebrow">REAL PROVIDER EVALUATION</p><h2 id="benchmark-title">DeepSeek V1.4.4 benchmark</h2></div>
-        <p><strong>10 known development cases</strong> — not an independent holdout and not an agriculture decision-accuracy score.</p>
+      <div class="section-heading">
+        <div><p class="eyebrow">REAL DEEPSEEK EVALUATION</p><h2 id="benchmark-title">真实模型评测，而不是只测 Mock</h2></div>
+        <p><strong>V1.4.4 · deepseek-flash · 10 条已知开发案例</strong><br>不是独立 Holdout，也不是农业决策准确率。</p>
       </div>
       <div class="metric-grid">
-        <article><span>Tool Selection F1</span><strong>96.67%</strong></article>
-        <article><span>Argument Accuracy</span><strong>100%</strong></article>
-        <article><span>Evidence Grounding</span><strong>100%</strong></article>
-        <article><span>Provenance Complete</span><strong>100%</strong></article>
+        <article><span>工具选择 F1</span><strong>96.67%</strong></article>
+        <article><span>参数准确率</span><strong>100%</strong></article>
+        <article><span>证据 Grounding</span><strong>100%</strong></article>
+        <article><span>来源完整率</span><strong>100%</strong></article>
       </div>
-      <div class="benchmark-table-wrap">
-        <table>
-          <thead><tr><th>Review layer</th><th>Result</th><th>Interpretation</th></tr></thead>
-          <tbody>
-            <tr><td>Human review</td><td>8 / 10 PASS</td><td>Two responses remained PARTIAL.</td></tr>
-            <tr><td>Strict automatic</td><td>5 / 10 PASS</td><td>Status and sequence rules were intentionally strict.</td></tr>
-            <tr><td>Scope violations</td><td>0</td><td>No view-level result was presented as plant-level.</td></tr>
-            <tr><td>Unsupported numerical claims</td><td>0</td><td>No ungrounded control quantity was emitted.</td></tr>
-          </tbody>
-        </table>
+      <div class="benchmark-detail">
+        <div><span>人工复核</span><strong>8 / 10 PASS</strong><small>其中 2 条保持 PARTIAL</small></div>
+        <div><span>严格自动评分</span><strong>5 / 10 PASS</strong><small>状态与顺序规则更严格</small></div>
+        <div><span>Scope 越界</span><strong>0</strong><small>View 结果未冒充 Plant 结果</small></div>
+        <div><span>无依据数值主张</span><strong>0</strong><small>未生成无证据控制量</small></div>
       </div>
-      <div class="benchmark-warning"><strong>Evaluation boundary:</strong> V1.4.5 fixes passed offline regression only. The independent 48-case holdout remains <code>NOT_RUN</code>.</div>
+      <p class="benchmark-warning"><strong>评测边界：</strong>V1.4.5 修复仅通过离线合同回归；独立 48-case Holdout 仍为 <code>NOT_RUN</code>。</p>
     </section>
 
-    <section class="architecture-section" aria-labelledby="architecture-title">
+    <section id="architecture" class="architecture-section" aria-labelledby="architecture-title">
       <div class="section-heading">
-        <div><p class="eyebrow">CONTROLLED ORCHESTRATION</p><h2 id="architecture-title">From request to traceable answer</h2></div>
-        <p>The LLM selects and sequences tools; deterministic contracts validate execution, evidence and answerability.</p>
+        <div><p class="eyebrow">CONTROLLED ORCHESTRATION</p><h2 id="architecture-title">专业工具计算，大模型组织判断</h2></div>
+        <p>LLM 负责意图与工具调用；确定性合同负责校验、证据归档、范围保护和回答状态。</p>
       </div>
-      <div class="architecture-flow" aria-label="Tomato Agent architecture flow">
-        <div class="arch-node strong">User request</div><span>→</span>
-        <div class="arch-node">DeepSeek<br><small>router &amp; tool calls</small></div><span>→</span>
-        <div class="arch-node">Typed registry<br><small>9 bounded tools</small></div><span>→</span>
-        <div class="arch-node">Evidence store<br><small>RAG · cases · ML</small></div><span>→</span>
-        <div class="arch-node strong">Grounded answer<br><small>scope · reliability</small></div>
+      <div class="architecture-flow" aria-label="番茄水肥智能体系统流程">
+        <article><span>01</span><strong>理解请求</strong><small>Request Contract</small></article>
+        <i>→</i><article><span>02</span><strong>调用工具</strong><small>9 个有界工具</small></article>
+        <i>→</i><article><span>03</span><strong>组织证据</strong><small>RAG · Case · ML</small></article>
+        <i>→</i><article><span>04</span><strong>评估可靠性</strong><small>Scope · Conflict</small></article>
+        <i>→</i><article class="strong"><span>05</span><strong>生成回答</strong><small>FULL · PARTIAL · ABSTAIN</small></article>
       </div>
       <div class="architecture-notes">
-        <article><strong>Knowledge RAG</strong><p>Retrieves agronomic evidence and preserves applicability boundaries.</p></article>
-        <article><strong>Historical memory</strong><p>Finds leakage-safe earlier cases with observed outcomes; similarity is not causality.</p></article>
-        <article><strong>Model tools</strong><p>Produce experimental numerical signals; the LLM does not calculate plant growth itself.</p></article>
+        <article><strong>知识 RAG</strong><p>检索农艺知识，并保留来源和适用边界。</p></article>
+        <article><strong>历史案例记忆</strong><p>只检索时间上更早的相似案例；相似不等于因果。</p></article>
+        <article><strong>专业模型工具</strong><p>提供实验性数值信号；LLM 不凭语言直接计算株高或灌溉量。</p></article>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div><strong>Tomato Agent</strong><span>Public-data decision-support prototype</span></div>
-    <div><span>No API calls from this page</span><span>·</span><span>No source dataset included</span></div>
+    <div><strong>番茄水肥智能体</strong><span>公开数据驱动的决策支持原型</span></div>
+    <div><span>本页面不调用 API</span><span>·</span><span>不包含原始数据与模型权重</span></div>
   </footer>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>

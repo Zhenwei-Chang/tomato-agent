@@ -1,26 +1,26 @@
 {
   "schema_version": "1.0",
   "scenario_id": "growth_prediction",
-  "title": "Plant growth prediction with reliability",
+  "title": "生长预测与可靠性",
   "category": "ml_tool_calling",
   "execution_mode": "recorded_replay",
-  "disclosure": "Sanitized V1.4.4 DeepSeek online development trace (v141_s04). Numerical values are preserved from the frozen result; local paths and call identifiers are removed. V1.4.5 status-contract fixes have not been revalidated online.",
+  "disclosure": "这是 V1.4.4 DeepSeek 在线开发记录 v141_s04 的脱敏回放。数值保留自冻结结果，本机路径与调用标识已移除；V1.4.5 的状态合同修复尚未重新完成在线验证。",
   "source": {"benchmark": "V1.4.4 DeepSeek Known-10 Online Regression", "case_id": "v141_s04", "provider": "deepseek", "model": "deepseek-flash", "trace_id": "v14-deepseek-v144-v141_s04"},
   "query": "预测植株 2023-111 从 2023-05-14 起七天后的株高，并评价可靠性。",
   "outcome": {"status": "PARTIAL", "reliability": "MEDIUM", "summary": "当前株高 29.50 cm、LAI 1.40；模型估计 7 天后株高 42.75 cm。该值是实验性预测，不是未来实测值，也没有校准预测区间。"},
   "tool_calls": [
-    {"index": 1, "name": "predict_height_t7", "arguments_summary": "plant=2023-111, date=2023-05-14", "status": "success", "scope": "plant", "evidence_count": 4, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 4885.814},
-    {"index": 2, "name": "assess_prediction_reliability", "arguments_summary": "matching plant scope and available inputs", "status": "success", "scope": "plant", "evidence_count": 1, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 0.189}
+    {"index": 1, "name": "predict_height_t7", "arguments_summary": "植株 2023-111，日期 2023-05-14", "status": "success", "scope": "plant", "evidence_count": 4, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 4885.814},
+    {"index": 2, "name": "assess_prediction_reliability", "arguments_summary": "检查单株范围与必要输入是否匹配", "status": "success", "scope": "plant", "evidence_count": 1, "error_code": null, "dispatch_source": "MODEL_GENERATED_TOOL_CALL", "latency_ms": 0.189}
   ],
   "claims": [
-    {"type": "observation", "text": "Current observed height is 29.50 cm.", "support": ["phenotype-canonical"]},
-    {"type": "prediction", "text": "The locked model estimates height at t+7 as 42.75 cm.", "support": ["model-v03-locked-b0"]}
+    {"type": "observation", "text": "当前实测株高为 29.50 cm。", "support": ["phenotype-canonical"]},
+    {"type": "prediction", "text": "锁定模型估计 t+7 株高为 42.75 cm。", "support": ["model-v03-locked-b0"]}
   ],
   "evidence": [
-    {"id": "phenotype-canonical", "type": "observation", "source_label": "canonical phenotype table", "scope": "plant", "summary": "Exact-date current height and LAI for plant 2023-111.", "reliability": "MEDIUM"},
-    {"id": "model-v03-locked-b0", "type": "prediction", "source_label": "locked HistGradientBoosting pipeline", "scope": "plant", "summary": "Autoregressive t+7 height estimate: 42.7464 cm.", "reliability": "MEDIUM"},
-    {"id": "reliability-rule-v1", "type": "reliability", "source_label": "rule-based assessment", "scope": "plant", "summary": "Known domain and matching scope; not statistically calibrated.", "reliability": "MEDIUM"}
+    {"id": "phenotype-canonical", "type": "observation", "source_label": "Canonical 表型表", "scope": "plant", "summary": "植株 2023-111 在目标日的株高与 LAI 实测值。", "reliability": "MEDIUM"},
+    {"id": "model-v03-locked-b0", "type": "prediction", "source_label": "锁定的 HistGradientBoosting Pipeline", "scope": "plant", "summary": "自回归 t+7 株高估计值：42.7464 cm。", "reliability": "MEDIUM"},
+    {"id": "reliability-rule-v1", "type": "reliability", "source_label": "规则式可靠性评估", "scope": "plant", "summary": "数据域已知且范围匹配；该可靠性没有经过统计校准。", "reliability": "MEDIUM"}
   ],
-  "limitations": ["Prediction depends strongly on current height and LAI.", "Strong cross-season sensor domain shift exists.", "No calibrated prediction interval.", "Public research data, not a live greenhouse."],
+  "limitations": ["预测强依赖当前株高与 LAI。", "传感器数据存在明显跨季分布偏移。", "没有经过校准的预测区间。", "数据来自公开科研数据集，不是实时温室。"],
   "trace": {"actual_tool_executions": 2, "final_gate": "PARTIAL"}
 }
