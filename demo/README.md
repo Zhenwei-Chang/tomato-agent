@@ -2,7 +2,7 @@
 
 This directory contains a zero-dependency viewer for **recorded, sanitized** Agent traces.
 
-The interface provides scenario switching, expandable tool-call details, real recorded dispatch-source and latency fields, Claim-to-Evidence highlighting, reliability/status boundaries, a benchmark panel and a copyable sanitized trace summary.
+The interface provides a Chinese Q&A workbench for the five verified example prompts, scenario switching, expandable tool-call details, real recorded dispatch-source and latency fields, Claim-to-Evidence highlighting, reliability/status boundaries, a benchmark panel and a copyable sanitized trace summary. Questions outside the five replay topics are rejected explicitly instead of being presented as live inference.
 
 ```powershell
 python demo/app.py

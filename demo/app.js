@@ -50,6 +50,15 @@ const scenarioDescriptions = {
 let scenarioIndex = null;
 let currentScenario = null;
 let selectedClaim = null;
+const scenarioCache = new Map();
+
+const promptExamples = [
+  { id: "knowledge_salt", label: "高盐条件会怎样影响番茄？" },
+  { id: "growth_prediction", label: "预测未来 7 天株高" },
+  { id: "historical_memory", label: "寻找历史相似案例" },
+  { id: "comprehensive", label: "综合分析未来长势" },
+  { id: "safety_refusal", label: "精确灌水多少毫升？" }
+];
 
 function localLabel(group, value) {
   return labels[group]?.[value] ?? value ?? "未记录";
@@ -61,6 +70,81 @@ function showToast(message) {
   toast.classList.add("show");
   window.clearTimeout(showToast.timer);
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function appendChatMessage(role, html) {
+  const root = $("#chat-messages");
+  const message = document.createElement("article");
+  message.className = `message ${role === "user" ? "user-message" : "assistant-message"}`;
+  message.innerHTML = `<span class="message-role">${role === "user" ? "你" : "Agent"}</span><div>${html}</div>`;
+  root.append(message);
+  root.scrollTo({ top: root.scrollHeight, behavior: "smooth" });
+  return message;
+}
+
+function matchScenario(query) {
+  const text = query.replaceAll(/\s+/g, "").toLowerCase();
+  if (/(毫升|精确灌水|精确灌溉|灌水多少|灌溉多少)/.test(text)) return "safety_refusal";
+  if (/(综合|当前状态.*环境|环境.*历史|未来长势)/.test(text)) return "comprehensive";
+  if (/(历史|相似案例|案例记忆|后来怎么样)/.test(text)) return "historical_memory";
+  if (/(高盐|盐害|盐胁迫|盐条件)/.test(text)) return "knowledge_salt";
+  if (/(预测|七天|7天|t\+7|未来.*株高)/.test(text)) return "growth_prediction";
+  return null;
+}
+
+function renderPromptChips() {
+  const root = $("#example-queries");
+  root.innerHTML = "";
+  promptExamples.forEach((prompt) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = prompt.label;
+    button.addEventListener("click", async () => {
+      const scenario = await getScenario(prompt.id);
+      $("#question-input").value = scenario.query;
+      await runRecordedQuestion(scenario.query, prompt.id);
+    });
+    root.append(button);
+  });
+}
+
+async function runRecordedQuestion(query, forcedScenarioId = null) {
+  const cleaned = query.trim();
+  if (!cleaned) return;
+  appendChatMessage("user", `<p>${esc(cleaned)}</p>`);
+  $("#question-input").value = "";
+
+  const scenarioId = forcedScenarioId || matchScenario(cleaned);
+  if (!scenarioId) {
+    appendChatMessage("assistant", `
+      <p>这个问题不在公开页面携带的 5 条录制场景中，因此我不能在静态网页里生成一个看似实时、实际无依据的回答。</p>
+      <p class="message-note">请选择一个示例问题；如需任意自由问答，请按仓库说明在本地启动完整 Agent。</p>
+      <div class="message-result-meta"><span>未调用模型</span><span>未生成答案</span><span>安全边界</span></div>`);
+    return;
+  }
+
+  const submit = $("#question-submit");
+  submit.disabled = true;
+  try {
+    const scenario = await loadScenario(scenarioId);
+    const toolCount = scenario.tool_calls.length;
+    const evidenceCount = scenario.evidence.length;
+    const response = appendChatMessage("assistant", `
+      <p>${esc(scenario.outcome.summary)}</p>
+      <div class="message-result-meta">
+        <span>${esc(localLabel("status", scenario.outcome.status))} · ${esc(scenario.outcome.status)}</span>
+        <span>可靠性 ${esc(localLabel("reliability", scenario.outcome.reliability))}</span>
+        <span>${toolCount} 次工具调用</span>
+        <span>${evidenceCount} 条有效证据</span>
+      </div>
+      <p class="message-note">回答来自冻结的 ${esc(scenario.source.case_id)}，不是本次实时模型生成。</p>
+      <div class="message-actions"><button type="button">查看工具与证据 ↓</button></div>`);
+    response.querySelector(".message-actions button").addEventListener("click", () => {
+      $("#scenario-explorer").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  } finally {
+    submit.disabled = false;
+  }
 }
 
 async function copyText(text, successMessage) {
@@ -246,12 +330,21 @@ function renderScenario(scenario) {
   renderLimitations(scenario.limitations || []);
 }
 
-async function loadScenario(id) {
+async function getScenario(id) {
+  if (scenarioCache.has(id)) return scenarioCache.get(id);
   const entry = scenarioIndex.scenarios.find((item) => item.id === id);
   if (!entry) throw new Error(`未知场景：${id}`);
   const response = await fetch(`fixtures/${entry.file}`);
   if (!response.ok) throw new Error(`无法加载场景：${entry.file}`);
-  renderScenario(await response.json());
+  const scenario = await response.json();
+  scenarioCache.set(id, scenario);
+  return scenario;
+}
+
+async function loadScenario(id) {
+  const scenario = await getScenario(id);
+  renderScenario(scenario);
+  return scenario;
 }
 
 async function init() {
@@ -259,9 +352,20 @@ async function init() {
   if (!response.ok) throw new Error("无法加载演示场景索引");
   scenarioIndex = await response.json();
   await loadScenario("comprehensive");
+  renderPromptChips();
 
   $("#copy-query").addEventListener("click", () => copyText(currentScenario.query, "问题已复制"));
   $("#copy-trace").addEventListener("click", () => copyText(traceSummary(currentScenario), "脱敏 Trace 已复制"));
+  $("#question-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await runRecordedQuestion($("#question-input").value);
+  });
+  $("#question-input").addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      $("#question-form").requestSubmit();
+    }
+  });
 }
 
 init().catch((error) => {

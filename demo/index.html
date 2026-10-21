@@ -29,7 +29,7 @@
         <h1 id="hero-title">先取证，<br><em>再回答。</em></h1>
         <p class="hero-lead">一个面向番茄生长分析的证据驱动智能体：由大模型选择工具，由专业工具计算事实，再用证据、范围与可靠性约束最终回答。</p>
         <div class="hero-actions">
-          <a class="button primary" href="#scenario-explorer">查看真实 Trace <span>↘</span></a>
+          <a class="button primary" href="#qa-console">开始问答演示 <span>↘</span></a>
           <a class="button secondary" href="#benchmark">查看评测结果</a>
         </div>
         <p class="hero-disclosure"><strong>这不是实时推理。</strong> 页面回放 5 条已脱敏、已冻结的 V1.4.4 开发记录；不上传数据，也不需要 API Key。</p>
@@ -39,6 +39,41 @@
         <article><span>受控工作流</span><strong>4</strong><small>有界路由与执行</small></article>
         <article><span>检索系统</span><strong>2</strong><small>知识 RAG + 历史记忆</small></article>
         <article><span>回答边界</span><strong class="status-text">FULL / PARTIAL / ABSTAIN</strong><small>证据不足时保留或拒答</small></article>
+      </div>
+    </section>
+
+    <section id="qa-console" class="qa-section" aria-labelledby="qa-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">ASK THE RECORDED AGENT</p><h2 id="qa-title">先问一个问题，再看它如何取证</h2></div>
+        <p>输入或选择下方示例问题。页面会回放对应的真实脱敏记录，并同步打开工具调用、证据和可靠性结果。</p>
+      </div>
+      <div class="qa-workbench">
+        <section class="chat-shell" aria-label="番茄智能体离线问答窗口">
+          <header class="chat-header">
+            <div><span class="agent-avatar" aria-hidden="true">叶</span><div><strong>番茄水肥智能体</strong><small><i></i> 录制回放问答</small></div></div>
+            <span class="chat-scope">5 个已验证场景</span>
+          </header>
+          <div id="chat-messages" class="chat-messages" aria-live="polite">
+            <article class="message assistant-message">
+              <span class="message-role">Agent</span>
+              <div><p>你好，我可以用 5 条已脱敏的真实开发记录，演示知识检索、生长预测、历史案例、综合分析和安全拒答。</p><p class="message-note">这是离线回放，不会调用 DeepSeek。请选择示例，或输入包含对应主题的问题。</p></div>
+            </article>
+          </div>
+          <div id="example-queries" class="prompt-chips" aria-label="示例问题"></div>
+          <form id="question-form" class="question-form">
+            <label class="sr-only" for="question-input">输入问题</label>
+            <textarea id="question-input" rows="2" placeholder="例如：查询某株番茄当前状态，并预测未来 7 天株高。" required></textarea>
+            <button id="question-submit" type="submit"><span>发送问题</span><b aria-hidden="true">↑</b></button>
+          </form>
+          <p class="question-hint">按 Enter 发送，Shift + Enter 换行。任意自由问答需要在本地运行完整 Agent。</p>
+        </section>
+        <aside class="mode-panel">
+          <p class="micro-label">EXECUTION MODES</p>
+          <h3>这个窗口实际运行什么？</h3>
+          <article class="mode-card active"><span>当前可用</span><strong>离线示例问答</strong><p>根据输入匹配 5 条冻结 Trace；答案、数值、工具顺序和 Evidence 均来自真实记录。</p></article>
+          <article class="mode-card"><span>仓库支持</span><strong>完整本地 Agent</strong><p>配置本地数据资产和 DeepSeek Key 后，运行真实 Tool Calling 与工作流。</p><a href="https://github.com/Zhenwei-Chang/tomato-agent#quick-start" target="_blank" rel="noreferrer">查看运行说明 ↗</a></article>
+          <div class="mode-warning"><strong>为什么不在网页里直接接 API？</strong><p>GitHub Pages 没有安全后端。把 API Key 放进浏览器会泄露凭证，也无法运行 Python 工具链。</p></div>
+        </aside>
       </div>
     </section>
 

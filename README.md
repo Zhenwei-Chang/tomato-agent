@@ -48,7 +48,7 @@ flowchart TB
 
 ## 30 秒离线体验
 
-无需安装的在线展示：[https://zhenwei-chang.github.io/tomato-agent/](https://zhenwei-chang.github.io/tomato-agent/)。这是明确标注的 Recorded Replay，不会调用 DeepSeek，也不接受任意自由文本推理。
+无需安装的在线展示：[https://zhenwei-chang.github.io/tomato-agent/](https://zhenwei-chang.github.io/tomato-agent/)。页面提供中文问答窗口，可输入或选择 5 个已验证示例，并回放对应的工具调用、证据与可靠性结果。它明确标注为 Recorded Replay，不会调用 DeepSeek；示例范围之外的问题会说明限制，不会伪装成任意自由文本推理。
 
 要求 Python 3.11+；不需要 API Key、PyTorch、模型权重或 26 GB 原始数据。
 

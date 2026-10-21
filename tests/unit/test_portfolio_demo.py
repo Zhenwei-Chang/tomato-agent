@@ -106,9 +106,12 @@ def test_static_demo_exposes_portfolio_interactions_and_truthfulness_labels():
     for required_id in (
         'id="scenario-tabs"', 'id="copy-query"', 'id="copy-trace"',
         'id="tools"', 'id="evidence"', 'id="benchmark"',
+        'id="question-form"', 'id="question-input"', 'id="chat-messages"',
     ):
         assert required_id in html
     assert "highlightEvidence" in javascript
+    assert "runRecordedQuestion" in javascript
+    assert "matchScenario" in javascript
     assert "dispatch_source" in javascript
     assert "NOT_RECORDED" in javascript
 

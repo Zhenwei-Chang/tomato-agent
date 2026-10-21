@@ -40,7 +40,7 @@ See the [full architecture](docs/architecture/SYSTEM_ARCHITECTURE.md), [function
 
 ## Quick Start — Offline Replay
 
-No-install web demo: [https://zhenwei-chang.github.io/tomato-agent/](https://zhenwei-chang.github.io/tomato-agent/). It is explicitly labelled Recorded Replay, makes no DeepSeek call, and does not pretend to support arbitrary live prompts.
+No-install web demo: [https://zhenwei-chang.github.io/tomato-agent/](https://zhenwei-chang.github.io/tomato-agent/). Its Chinese Q&A workbench accepts or suggests five verified example prompts and replays the matching tools, evidence and reliability result. It is explicitly labelled Recorded Replay, makes no DeepSeek call, and rejects topics outside the fixture set instead of pretending to support arbitrary live prompts.
 
 Python 3.11+ is sufficient. No API key, model weight, PyTorch install, or 26 GB dataset is required.
 
